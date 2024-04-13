@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,12 +9,18 @@ import (
 
 	"github.com/ykpythemind/gomvc"
 	"github.com/ykpythemind/gomvc/controllers"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 	fmt.Println("a")
 
-	app := &gomvc.App{}
+	rawdb, err := sql.Open("sqlite3", "./db/development.sqlite3")
+	if err != nil {
+		log.Fatal(err)
+	}
+	app := gomvc.NewApp(rawdb)
 	router := controllers.InitRouter(app)
 
 	srv := &http.Server{
