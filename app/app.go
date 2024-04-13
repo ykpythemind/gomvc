@@ -2,8 +2,9 @@ package gomvc
 
 import (
 	"database/sql"
+	"os"
 
-	"github.com/ykpythemind/gomvc/db"
+	"github.com/ykpythemind/gomvc/models"
 )
 
 // App is the application and config struct
@@ -17,6 +18,15 @@ func NewApp(rawDB *sql.DB) *App {
 	return &App{rawDB: rawDB}
 }
 
-func (a *App) DB() *db.DB {
-	return db.NewDB(a.rawDB)
+// useDB returns a new DB instance
+func (a *App) UseDB() *models.DB {
+	return models.NewDB(a.rawDB)
+}
+
+func MustEnv(key string) string {
+	v := os.Getenv(key)
+	if v == "" {
+		panic(key + " is not set")
+	}
+	return v
 }
