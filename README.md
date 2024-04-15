@@ -12,5 +12,12 @@
 bundle install
 rake db:migrate
 
-DATABASE_URL="$(pwd)/../db/development.sqlite3" go run cmd/server/main.go
+DATABASE_URL="$(pwd)/../db/development.sqlite3" air -c air.toml
+```
+
+### test
+
+```
+rake db:migrate RAILS_ENV=test
+TEST_DATABASE_URL="$(pwd)/../db/test.sqlite3" go test ./...
 ```

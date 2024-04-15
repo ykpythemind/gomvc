@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	fmt.Println("a")
+	fmt.Println("starting...")
 
 	rawdb, err := sql.Open("sqlite3", gomvc.MustEnv("DATABASE_URL"))
 	if err != nil {

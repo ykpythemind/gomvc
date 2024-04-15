@@ -2,6 +2,7 @@ package gomvc
 
 import (
 	"database/sql"
+	"log/slog"
 	"os"
 
 	"github.com/ykpythemind/gomvc/models"
@@ -15,6 +16,9 @@ type App struct {
 }
 
 func NewApp(rawDB *sql.DB) *App {
+	logger := slog.New(NewLogHandler(slog.NewJSONHandler(os.Stdout, nil)))
+	slog.SetDefault(logger)
+
 	return &App{rawDB: rawDB}
 }
 

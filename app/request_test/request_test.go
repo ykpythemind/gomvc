@@ -21,10 +21,14 @@ func prepare() (*gomvc.App, func()) {
 		log.Fatal(err)
 	}
 	app := gomvc.NewApp(rawdb)
-	fn := func() {
+	cleanup := func() {
+		// sqliteにはtruncateがないらしい
+		db := app.UseDB()
+		db.MustExec("DELETE FROM posts")
+		db.MustExec("DELETE FROM users")
 		rawdb.Close()
 	}
-	return app, fn
+	return app, cleanup
 }
 
 func handlerTest(r *http.Request, handler http.HandlerFunc) *httptest.ResponseRecorder {
