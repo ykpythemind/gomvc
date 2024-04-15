@@ -45,3 +45,11 @@ func (u *User) Create(ctx context.Context, db *DB) error {
 	}
 	return nil
 }
+
+// Validate validates the user model. 更新系のメソッドを呼ぶ前に明示的に呼び出す
+func (u *User) Validate() error {
+	if u.Name == "" {
+		return xerrors.New("name is required")
+	}
+	return nil
+}

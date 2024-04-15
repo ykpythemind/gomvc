@@ -5,6 +5,8 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/ykpythemind/gomvc/implements"
+	"github.com/ykpythemind/gomvc/interfaces"
 	"github.com/ykpythemind/gomvc/models"
 )
 
@@ -13,13 +15,21 @@ type App struct {
 	Revision string // Revision is the git revision of the build
 
 	rawDB *sql.DB
+
+	// for dependency injection
+	CoffeeList interfaces.CoffeeList
 }
 
 func NewApp(rawDB *sql.DB) *App {
 	logger := slog.New(NewLogHandler(slog.NewJSONHandler(os.Stdout, nil)))
 	slog.SetDefault(logger)
 
-	return &App{rawDB: rawDB}
+	var coffeeList interfaces.CoffeeList
+
+	// 環境によって実装をさしかえる
+	coffeeList = &implements.CoffeeListImpl{}
+
+	return &App{rawDB: rawDB, CoffeeList: coffeeList}
 }
 
 // useDB returns a new DB instance

@@ -23,6 +23,7 @@ func InitRouter(app *gomvc.App) *mux.Router {
 	controller := NewController(app)
 	r.HandleFunc("/", controller.IndexPosts)
 	r.HandleFunc("/ping", controller.Ping)
+	r.HandleFunc("/coffee", controller.Coffee)
 	r.HandleFunc("/users", controller.IndexUsers)
 	r.Methods("POST").Path("/users/new/{name}").HandlerFunc(controller.NewUsers)
 	r.HandleFunc("/error", controller.ErrorTest)
@@ -82,6 +83,20 @@ func (c *Controller) IndexPosts(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("post index"))
 }
 
+func (c *Controller) Coffee(w http.ResponseWriter, r *http.Request) {
+	coffees, err := c.App.CoffeeList.Fetch(r.Context())
+	if err != nil {
+		responseError(w, r, err)
+		return
+	}
+
+	responseStr := ""
+	for _, c := range coffees {
+		responseStr = fmt.Sprintf("%s\ntitle: %s,\ndescription: %s\n", responseStr, c.Title, c.Description)
+	}
+	w.Write([]byte(responseStr))
+}
+
 // Ping is handler
 func (c *Controller) Ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
@@ -129,19 +144,6 @@ func (c *Controller) IndexUsers(w http.ResponseWriter, r *http.Request) {
 		responseError(w, r, err)
 		return
 	}
-
-	/* レスポンス例
-	responseStr := ""
-	for _, user := range users {
-		fullname, err := user.FullName(ctx)
-		if err != nil {
-			responseError(w, err)
-			return
-		}
-		responseStr = fmt.Sprintf("%s\nid: %d, name: %s", responseStr, user.ID, fullname)
-	}
-	w.Write([]byte(responseStr))
-	*/
 
 	if resp, err := jsonresponse.JSONUsers(users); err != nil {
 		responseError(w, r, err)
