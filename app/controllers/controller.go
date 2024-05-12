@@ -108,8 +108,9 @@ func (c *Controller) ErrorTest(w http.ResponseWriter, r *http.Request) {
 
 	err = xerrors.Errorf("wrapped error : %w", err)
 
-	// test stacktrace FIXME: not working
-	slog.ErrorContext(r.Context(), fmt.Sprintf("error: %v", err))
+	// fmt.Printf("error: %+v", err)
+	msg := fmt.Sprintf("error: %+v", err)
+	slog.ErrorContext(r.Context(), msg)
 
 	w.Write([]byte("pong"))
 }
